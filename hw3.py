@@ -144,7 +144,6 @@ def percent_below_poverty_level(lista:list[CountyDemographics])->float:
 # greater than 60 percent.
 
 def education_greater_than(lista:list[CountyDemographics], ed_key:str, numeric_threshold:float)->list[CountyDemographics]:
-    total = 0
     result_list = []
     for county in lista:
         if ed_key in county.education:
@@ -154,7 +153,6 @@ def education_greater_than(lista:list[CountyDemographics], ed_key:str, numeric_t
     return result_list
 
 def education_less_than(lista:list[CountyDemographics], ed_key:str, numeric_threshold:float)->list[CountyDemographics]:
-    total = 0
     result_list = []
     for county in lista:
         if ed_key in county.education:
@@ -173,7 +171,6 @@ def education_less_than(lista:list[CountyDemographics], ed_key:str, numeric_thre
 # than 30 percent.
 
 def ethnicity_greater_than(lista:list[CountyDemographics], ethnicity_key:str, numeric_threshold:float)->list[CountyDemographics]:
-    total = 0
     result_list = []
     for county in lista:
         if ethnicity_key in county.ethnicities:
@@ -183,7 +180,6 @@ def ethnicity_greater_than(lista:list[CountyDemographics], ethnicity_key:str, nu
     return result_list
 
 def ethnicity_less_than(lista:list[CountyDemographics], ethnicity_key:str, numeric_threshold:float)->list[CountyDemographics]:
-    total = 0
     result_list = []
     for county in lista:
         if ethnicity_key in county.ethnicities:
