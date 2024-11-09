@@ -1,7 +1,10 @@
 import data
 import build_data
 import unittest
+import county_demographics
 
+import hw3
+from hw3 import education_less_than
 
 # These two values are defined to support testing below. The
 # data within these structures should not be modified. Doing
@@ -180,27 +183,813 @@ class TestCases(unittest.TestCase):
 
     # Part 1
     # test population_total
+    #If passed the full data set, then the expected result should be 318,857,056.
+    def test_population_total(self):
+        input = full_data
+        expected = 318857056
+        actual = hw3.population_total(input)
+        self.assertEqual(expected, actual)
+
+    def test_population_total_2(self):
+        input = [data.CountyDemographics(
+        {'Percent 65 and Older': 15.3,
+         'Percent Under 18 Years': 25.1,
+         'Percent Under 5 Years': 6.9},
+        'Pettis County',
+        {"Bachelor's Degree or Higher": 15.2,
+         'High School or Higher': 81.8},
+        {'American Indian and Alaska Native Alone': 0.7,
+         'Asian Alone': 0.7,
+         'Black Alone': 3.4,
+         'Hispanic or Latino': 8.3,
+         'Native Hawaiian and Other Pacific Islander Alone': 0.3,
+         'Two or More Races': 1.9,
+         'White Alone': 92.9,
+         'White Alone, not Hispanic or Latino': 85.5},
+        {'Per Capita Income': 19709,
+         'Persons Below Poverty Level': 18.4,
+         'Median Household Income': 38580},
+        {'2010 Population': 42201,
+         '2014 Population': 42225,
+         'Population Percent Change': 0.1,
+         'Population per Square Mile': 61.9},
+        'MO')]
+        expected = 42225
+        actual = hw3.population_total(input)
+        self.assertEqual(expected, actual)
 
     # Part 2
     # test filter_by_state
+    #for ca should be 58 counties
+    def test_filter_by_state(self):
+        input = reduced_data
+        expected = [data.CountyDemographics(
+        {'Percent 65 and Older': 15.3,
+         'Percent Under 18 Years': 25.1,
+         'Percent Under 5 Years': 6.0},
+        'Crawford County',
+        {"Bachelor's Degree or Higher": 14.3,
+         'High School or Higher': 82.2},
+        {'American Indian and Alaska Native Alone': 2.5,
+         'Asian Alone': 1.6,
+         'Black Alone': 1.6,
+         'Hispanic or Latino': 6.7,
+         'Native Hawaiian and Other Pacific Islander Alone': 0.1,
+         'Two or More Races': 2.8,
+         'White Alone': 91.5,
+         'White Alone, not Hispanic or Latino': 85.6},
+        {'Per Capita Income': 19477,
+         'Persons Below Poverty Level': 20.2,
+         'Median Household Income': 39479},
+        {'2010 Population': 61948,
+         '2014 Population': 61697,
+         'Population Percent Change': -0.4,
+         'Population per Square Mile': 104.4},
+        'AR')]
+        actual = hw3.filter_by_state(input, "AR")
+        self.assertEqual(expected, actual)
+
+    def test_filter_by_sate_2(self):
+        input = [data.CountyDemographics(
+            {'Percent 65 and Older': 15.3,
+             'Percent Under 18 Years': 25.1,
+             'Percent Under 5 Years': 6.9},
+            'Pettis County',
+            {"Bachelor's Degree or Higher": 15.2,
+             'High School or Higher': 81.8},
+            {'American Indian and Alaska Native Alone': 0.7,
+             'Asian Alone': 0.7,
+             'Black Alone': 3.4,
+             'Hispanic or Latino': 8.3,
+             'Native Hawaiian and Other Pacific Islander Alone': 0.3,
+             'Two or More Races': 1.9,
+             'White Alone': 92.9,
+             'White Alone, not Hispanic or Latino': 85.5},
+            {'Per Capita Income': 19709,
+             'Persons Below Poverty Level': 18.4,
+             'Median Household Income': 38580},
+            {'2010 Population': 42201,
+             '2014 Population': 42225,
+             'Population Percent Change': 0.1,
+             'Population per Square Mile': 61.9},
+            'MO')]
+        expected = [data.CountyDemographics(
+            {'Percent 65 and Older': 15.3,
+             'Percent Under 18 Years': 25.1,
+             'Percent Under 5 Years': 6.9},
+            'Pettis County',
+            {"Bachelor's Degree or Higher": 15.2,
+             'High School or Higher': 81.8},
+            {'American Indian and Alaska Native Alone': 0.7,
+             'Asian Alone': 0.7,
+             'Black Alone': 3.4,
+             'Hispanic or Latino': 8.3,
+             'Native Hawaiian and Other Pacific Islander Alone': 0.3,
+             'Two or More Races': 1.9,
+             'White Alone': 92.9,
+             'White Alone, not Hispanic or Latino': 85.5},
+            {'Per Capita Income': 19709,
+             'Persons Below Poverty Level': 18.4,
+             'Median Household Income': 38580},
+            {'2010 Population': 42201,
+             '2014 Population': 42225,
+             'Population Percent Change': 0.1,
+             'Population per Square Mile': 61.9},
+            'MO')]
+        actual = hw3.filter_by_state(input, 'MO')
+        self.assertEqual(expected, actual)
+        
 
     # Part 3
     # test population_by_education
+    def test_population_by_education(self):
+        input = reduced_data
+        expected = 195115
+        actual = hw3.population_by_education(input, "Bachelor's Degree or Higher")
+        self.assertEqual(expected, actual)
+
+    def test_population_by_education_2(self):
+        input = reduced_data
+        expected = 0
+        actual = hw3.population_by_education(input, "does not exist")
+        self.assertEqual(expected, actual)
+
+    def test_population_by_education_3(self):
+        input = [data.CountyDemographics(
+        {'Percent 65 and Older': 18.1,
+         'Percent Under 18 Years': 21.6,
+         'Percent Under 5 Years': 6.5},
+        'Weston County',
+        {"Bachelor's Degree or Higher": 17.2,
+         'High School or Higher': 90.2},
+        {'American Indian and Alaska Native Alone': 1.7,
+         'Asian Alone': 0.4,
+         'Black Alone': 0.7,
+         'Hispanic or Latino': 4.2,
+         'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+         'Two or More Races': 2.2,
+         'White Alone': 95.0,
+         'White Alone, not Hispanic or Latino': 91.5},
+        {'Per Capita Income': 28764,
+         'Persons Below Poverty Level': 11.2,
+         'Median Household Income': 55461},
+        {'2010 Population': 7208,
+         '2014 Population': 7201,
+         'Population Percent Change': -0.1,
+         'Population per Square Mile': 3.0},
+        'WY')]
+        expected = 1239
+        actual = hw3.population_by_education(input, "Bachelor's Degree or Higher")
+        self.assertEqual(expected, actual)
+
     # test population_by_ethnicity
+    def test_population_by_ethnicity(self):
+        input = [data.CountyDemographics(
+        {'Percent 65 and Older': 18.1,
+         'Percent Under 18 Years': 21.6,
+         'Percent Under 5 Years': 6.5},
+        'Weston County',
+        {"Bachelor's Degree or Higher": 17.2,
+         'High School or Higher': 90.2},
+        {'American Indian and Alaska Native Alone': 1.7,
+         'Asian Alone': 0.4,
+         'Black Alone': 0.7,
+         'Hispanic or Latino': 4.2,
+         'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+         'Two or More Races': 2.2,
+         'White Alone': 95.0,
+         'White Alone, not Hispanic or Latino': 91.5},
+        {'Per Capita Income': 28764,
+         'Persons Below Poverty Level': 11.2,
+         'Median Household Income': 55461},
+        {'2010 Population': 7208,
+         '2014 Population': 7201,
+         'Population Percent Change': -0.1,
+         'Population per Square Mile': 3.0},
+        'WY')]
+        expected = 302
+        actual = hw3.population_by_ethnicity(input, "Hispanic or Latino")
+        self.assertEqual(expected, actual)
+
+    def test_population_by_ethnicity_2(self):
+        input = reduced_data
+        expected = 0
+        actual = hw3.population_by_ethnicity(input, "does not exist")
+        self.assertEqual(expected, actual)
+
     # test population_below_poverty_level
+    def test_population_below_poverty_level(self):
+        input = [data.CountyDemographics(
+            {'Percent 65 and Older': 18.1,
+             'Percent Under 18 Years': 21.6,
+             'Percent Under 5 Years': 6.5},
+            'Weston County',
+            {"Bachelor's Degree or Higher": 17.2,
+             'High School or Higher': 90.2},
+            {'American Indian and Alaska Native Alone': 1.7,
+             'Asian Alone': 0.4,
+             'Black Alone': 0.7,
+             'Hispanic or Latino': 4.2,
+             'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+             'Two or More Races': 2.2,
+             'White Alone': 95.0,
+             'White Alone, not Hispanic or Latino': 91.5},
+            {'Per Capita Income': 28764,
+             'Persons Below Poverty Level': 11.2,
+             'Median Household Income': 55461},
+            {'2010 Population': 7208,
+             '2014 Population': 7201,
+             'Population Percent Change': -0.1,
+             'Population per Square Mile': 3.0},
+            'WY')]
+        expected = 807
+        actual = hw3.population_below_poverty_level(input)
+        self.assertEqual(expected, actual)
+
+    def test_population_below_poverty_level_2(self):
+        input = reduced_data
+        expected = 107713
+        actual = hw3.population_below_poverty_level(input)
+        self.assertEqual(expected, actual)
 
     # Part 4
     # test percent_by_education
+    def test_percent_by_education(self):
+        input = [data.CountyDemographics(
+            {'Percent 65 and Older': 18.1,
+             'Percent Under 18 Years': 21.6,
+             'Percent Under 5 Years': 6.5},
+            'Weston County',
+            {"Bachelor's Degree or Higher": 17.2,
+             'High School or Higher': 90.2},
+            {'American Indian and Alaska Native Alone': 1.7,
+             'Asian Alone': 0.4,
+             'Black Alone': 0.7,
+             'Hispanic or Latino': 4.2,
+             'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+             'Two or More Races': 2.2,
+             'White Alone': 95.0,
+             'White Alone, not Hispanic or Latino': 91.5},
+            {'Per Capita Income': 28764,
+             'Persons Below Poverty Level': 11.2,
+             'Median Household Income': 55461},
+            {'2010 Population': 7208,
+             '2014 Population': 7201,
+             'Population Percent Change': -0.1,
+             'Population per Square Mile': 3.0},
+            'WY')]
+        expected = 17
+        actual = hw3.percent_by_education(input, "Bachelor's Degree or Higher")
+        self.assertEqual(expected, actual)
+
+    def test_percent_by_education_2(self):
+        input = reduced_data
+        expected = 0
+        actual = hw3.percent_by_education(input, "does not exist")
+        self.assertEqual(expected, actual)
+
     # test percent_by_ethnicity
+
+    def test_percent_by_ethnicity(self):
+        input = [data.CountyDemographics(
+            {'Percent 65 and Older': 18.1,
+             'Percent Under 18 Years': 21.6,
+             'Percent Under 5 Years': 6.5},
+            'Weston County',
+            {"Bachelor's Degree or Higher": 17.2,
+             'High School or Higher': 90.2},
+            {'American Indian and Alaska Native Alone': 1.7,
+             'Asian Alone': 0.4,
+             'Black Alone': 0.7,
+             'Hispanic or Latino': 4.2,
+             'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+             'Two or More Races': 2.2,
+             'White Alone': 95.0,
+             'White Alone, not Hispanic or Latino': 91.5},
+            {'Per Capita Income': 28764,
+             'Persons Below Poverty Level': 11.2,
+             'Median Household Income': 55461},
+            {'2010 Population': 7208,
+             '2014 Population': 7201,
+             'Population Percent Change': -0.1,
+             'Population per Square Mile': 3.0},
+            'WY')]
+        expected = 95
+        actual = hw3.percent_by_ethnicity(input, "White Alone")
+        self.assertEqual(expected, actual)
+
+    def test_percent_by_ethnicity_2(self):
+        input = reduced_data
+        expected = 0
+        actual = hw3.percent_by_ethnicity(input, "does not exist")
+        self.assertEqual(expected, actual)
+
     # test percent_below_poverty_level
+    def test_percent_below_poverty_level(self):
+        input = [data.CountyDemographics(
+            {'Percent 65 and Older': 18.1,
+             'Percent Under 18 Years': 21.6,
+             'Percent Under 5 Years': 6.5},
+            'Weston County',
+            {"Bachelor's Degree or Higher": 17.2,
+             'High School or Higher': 90.2},
+            {'American Indian and Alaska Native Alone': 1.7,
+             'Asian Alone': 0.4,
+             'Black Alone': 0.7,
+             'Hispanic or Latino': 4.2,
+             'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+             'Two or More Races': 2.2,
+             'White Alone': 95.0,
+             'White Alone, not Hispanic or Latino': 91.5},
+            {'Per Capita Income': 28764,
+             'Persons Below Poverty Level': 11.2,
+             'Median Household Income': 55461},
+            {'2010 Population': 7208,
+             '2014 Population': 7201,
+             'Population Percent Change': -0.1,
+             'Population per Square Mile': 3.0},
+            'WY')]
+        expected = 11
+        actual = hw3.percent_below_poverty_level(input)
+        self.assertEqual(expected, actual)
+
+    def test_percent_below_poverty_level_2(self):
+        input = reduced_data
+        expected = 16
+        actual = hw3.percent_below_poverty_level(input)
+        self.assertEqual(expected, actual)
 
     # Part 5
     # test education_greater_than
+    def test_education_greater_than(self):
+        input = [data.CountyDemographics(
+            {'Percent 65 and Older': 18.1,
+             'Percent Under 18 Years': 21.6,
+             'Percent Under 5 Years': 6.5},
+            'Weston County',
+            {"Bachelor's Degree or Higher": 17.2,
+             'High School or Higher': 90.2},
+            {'American Indian and Alaska Native Alone': 1.7,
+             'Asian Alone': 0.4,
+             'Black Alone': 0.7,
+             'Hispanic or Latino': 4.2,
+             'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+             'Two or More Races': 2.2,
+             'White Alone': 95.0,
+             'White Alone, not Hispanic or Latino': 91.5},
+            {'Per Capita Income': 28764,
+             'Persons Below Poverty Level': 11.2,
+             'Median Household Income': 55461},
+            {'2010 Population': 7208,
+             '2014 Population': 7201,
+             'Population Percent Change': -0.1,
+             'Population per Square Mile': 3.0},
+            'WY')]
+        expected = []
+        actual = hw3.education_greater_than(input, "Bachelor's Degree or Higher", 50)
+        self.assertEqual(expected, actual)
+
+    def test_education_greater_than_2(self):
+            input = [data.CountyDemographics(
+                {'Percent 65 and Older': 18.1,
+                 'Percent Under 18 Years': 21.6,
+                 'Percent Under 5 Years': 6.5},
+                'Weston County',
+                {"Bachelor's Degree or Higher": 17.2,
+                 'High School or Higher': 90.2},
+                {'American Indian and Alaska Native Alone': 1.7,
+                 'Asian Alone': 0.4,
+                 'Black Alone': 0.7,
+                 'Hispanic or Latino': 4.2,
+                 'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+                 'Two or More Races': 2.2,
+                 'White Alone': 95.0,
+                 'White Alone, not Hispanic or Latino': 91.5},
+                {'Per Capita Income': 28764,
+                 'Persons Below Poverty Level': 11.2,
+                 'Median Household Income': 55461},
+                {'2010 Population': 7208,
+                 '2014 Population': 7201,
+                 'Population Percent Change': -0.1,
+                 'Population per Square Mile': 3.0},
+                'WY')]
+            expected = [data.CountyDemographics(
+                {'Percent 65 and Older': 18.1,
+                 'Percent Under 18 Years': 21.6,
+                 'Percent Under 5 Years': 6.5},
+                'Weston County',
+                {"Bachelor's Degree or Higher": 17.2,
+                 'High School or Higher': 90.2},
+                {'American Indian and Alaska Native Alone': 1.7,
+                 'Asian Alone': 0.4,
+                 'Black Alone': 0.7,
+                 'Hispanic or Latino': 4.2,
+                 'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+                 'Two or More Races': 2.2,
+                 'White Alone': 95.0,
+                 'White Alone, not Hispanic or Latino': 91.5},
+                {'Per Capita Income': 28764,
+                 'Persons Below Poverty Level': 11.2,
+                 'Median Household Income': 55461},
+                {'2010 Population': 7208,
+                 '2014 Population': 7201,
+                 'Population Percent Change': -0.1,
+                 'Population per Square Mile': 3.0},
+                'WY')]
+            actual = hw3.education_greater_than(input, "High School or Higher", 50)
+            self.assertEqual(expected, actual)
+
     # test education_less_than
+    def test_education_less_than(self):
+        input = [data.CountyDemographics(
+            {'Percent 65 and Older': 18.1,
+             'Percent Under 18 Years': 21.6,
+             'Percent Under 5 Years': 6.5},
+            'Weston County',
+            {"Bachelor's Degree or Higher": 17.2,
+             'High School or Higher': 90.2},
+            {'American Indian and Alaska Native Alone': 1.7,
+             'Asian Alone': 0.4,
+             'Black Alone': 0.7,
+             'Hispanic or Latino': 4.2,
+             'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+             'Two or More Races': 2.2,
+             'White Alone': 95.0,
+             'White Alone, not Hispanic or Latino': 91.5},
+            {'Per Capita Income': 28764,
+             'Persons Below Poverty Level': 11.2,
+             'Median Household Income': 55461},
+            {'2010 Population': 7208,
+             '2014 Population': 7201,
+             'Population Percent Change': -0.1,
+             'Population per Square Mile': 3.0},
+            'WY')]
+        expected = [data.CountyDemographics(
+            {'Percent 65 and Older': 18.1,
+             'Percent Under 18 Years': 21.6,
+             'Percent Under 5 Years': 6.5},
+            'Weston County',
+            {"Bachelor's Degree or Higher": 17.2,
+             'High School or Higher': 90.2},
+            {'American Indian and Alaska Native Alone': 1.7,
+             'Asian Alone': 0.4,
+             'Black Alone': 0.7,
+             'Hispanic or Latino': 4.2,
+             'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+             'Two or More Races': 2.2,
+             'White Alone': 95.0,
+             'White Alone, not Hispanic or Latino': 91.5},
+            {'Per Capita Income': 28764,
+             'Persons Below Poverty Level': 11.2,
+             'Median Household Income': 55461},
+            {'2010 Population': 7208,
+             '2014 Population': 7201,
+             'Population Percent Change': -0.1,
+             'Population per Square Mile': 3.0},
+            'WY')]
+        actual = hw3.education_less_than(input, "Bachelor's Degree or Higher", 50)
+        self.assertEqual(expected, actual)
+
+    def test_education_less_than_2(self):
+            input = [data.CountyDemographics(
+                {'Percent 65 and Older': 18.1,
+                 'Percent Under 18 Years': 21.6,
+                 'Percent Under 5 Years': 6.5},
+                'Weston County',
+                {"Bachelor's Degree or Higher": 17.2,
+                 'High School or Higher': 90.2},
+                {'American Indian and Alaska Native Alone': 1.7,
+                 'Asian Alone': 0.4,
+                 'Black Alone': 0.7,
+                 'Hispanic or Latino': 4.2,
+                 'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+                 'Two or More Races': 2.2,
+                 'White Alone': 95.0,
+                 'White Alone, not Hispanic or Latino': 91.5},
+                {'Per Capita Income': 28764,
+                 'Persons Below Poverty Level': 11.2,
+                 'Median Household Income': 55461},
+                {'2010 Population': 7208,
+                 '2014 Population': 7201,
+                 'Population Percent Change': -0.1,
+                 'Population per Square Mile': 3.0},
+                'WY')]
+            expected = []
+            actual = hw3.education_less_than(input, "High School or Higher", 50)
+            self.assertEqual(expected, actual)
     # test ethnicity_greater_than
+    def test_ethnicity_greater_than(self):
+        input = [data.CountyDemographics(
+            {'Percent 65 and Older': 18.1,
+             'Percent Under 18 Years': 21.6,
+             'Percent Under 5 Years': 6.5},
+            'Weston County',
+            {"Bachelor's Degree or Higher": 17.2,
+             'High School or Higher': 90.2},
+            {'American Indian and Alaska Native Alone': 1.7,
+             'Asian Alone': 0.4,
+             'Black Alone': 0.7,
+             'Hispanic or Latino': 4.2,
+             'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+             'Two or More Races': 2.2,
+             'White Alone': 95.0,
+             'White Alone, not Hispanic or Latino': 91.5},
+            {'Per Capita Income': 28764,
+             'Persons Below Poverty Level': 11.2,
+             'Median Household Income': 55461},
+            {'2010 Population': 7208,
+             '2014 Population': 7201,
+             'Population Percent Change': -0.1,
+             'Population per Square Mile': 3.0},
+            'WY')]
+        expected = []
+        actual = hw3.ethnicity_greater_than(input, "Two or More Races", 50)
+        self.assertEqual(expected, actual)
+
+    def test_ethnicity_greater_than_2(self):
+            input = [data.CountyDemographics(
+                {'Percent 65 and Older': 18.1,
+                 'Percent Under 18 Years': 21.6,
+                 'Percent Under 5 Years': 6.5},
+                'Weston County',
+                {"Bachelor's Degree or Higher": 17.2,
+                 'High School or Higher': 90.2},
+                {'American Indian and Alaska Native Alone': 1.7,
+                 'Asian Alone': 0.4,
+                 'Black Alone': 0.7,
+                 'Hispanic or Latino': 4.2,
+                 'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+                 'Two or More Races': 2.2,
+                 'White Alone': 95.0,
+                 'White Alone, not Hispanic or Latino': 91.5},
+                {'Per Capita Income': 28764,
+                 'Persons Below Poverty Level': 11.2,
+                 'Median Household Income': 55461},
+                {'2010 Population': 7208,
+                 '2014 Population': 7201,
+                 'Population Percent Change': -0.1,
+                 'Population per Square Mile': 3.0},
+                'WY')]
+            expected = [data.CountyDemographics(
+                {'Percent 65 and Older': 18.1,
+                 'Percent Under 18 Years': 21.6,
+                 'Percent Under 5 Years': 6.5},
+                'Weston County',
+                {"Bachelor's Degree or Higher": 17.2,
+                 'High School or Higher': 90.2},
+                {'American Indian and Alaska Native Alone': 1.7,
+                 'Asian Alone': 0.4,
+                 'Black Alone': 0.7,
+                 'Hispanic or Latino': 4.2,
+                 'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+                 'Two or More Races': 2.2,
+                 'White Alone': 95.0,
+                 'White Alone, not Hispanic or Latino': 91.5},
+                {'Per Capita Income': 28764,
+                 'Persons Below Poverty Level': 11.2,
+                 'Median Household Income': 55461},
+                {'2010 Population': 7208,
+                 '2014 Population': 7201,
+                 'Population Percent Change': -0.1,
+                 'Population per Square Mile': 3.0},
+                'WY')]
+            actual = hw3.ethnicity_greater_than(input, "White Alone", 50)
+            self.assertEqual(expected, actual)
     # test ethnicity_less_than
+    def test_ethnicity_less_than(self):
+        input = [data.CountyDemographics(
+            {'Percent 65 and Older': 18.1,
+             'Percent Under 18 Years': 21.6,
+             'Percent Under 5 Years': 6.5},
+            'Weston County',
+            {"Bachelor's Degree or Higher": 17.2,
+             'High School or Higher': 90.2},
+            {'American Indian and Alaska Native Alone': 1.7,
+             'Asian Alone': 0.4,
+             'Black Alone': 0.7,
+             'Hispanic or Latino': 4.2,
+             'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+             'Two or More Races': 2.2,
+             'White Alone': 95.0,
+             'White Alone, not Hispanic or Latino': 91.5},
+            {'Per Capita Income': 28764,
+             'Persons Below Poverty Level': 11.2,
+             'Median Household Income': 55461},
+            {'2010 Population': 7208,
+             '2014 Population': 7201,
+             'Population Percent Change': -0.1,
+             'Population per Square Mile': 3.0},
+            'WY')]
+        expected = [data.CountyDemographics(
+                {'Percent 65 and Older': 18.1,
+                 'Percent Under 18 Years': 21.6,
+                 'Percent Under 5 Years': 6.5},
+                'Weston County',
+                {"Bachelor's Degree or Higher": 17.2,
+                 'High School or Higher': 90.2},
+                {'American Indian and Alaska Native Alone': 1.7,
+                 'Asian Alone': 0.4,
+                 'Black Alone': 0.7,
+                 'Hispanic or Latino': 4.2,
+                 'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+                 'Two or More Races': 2.2,
+                 'White Alone': 95.0,
+                 'White Alone, not Hispanic or Latino': 91.5},
+                {'Per Capita Income': 28764,
+                 'Persons Below Poverty Level': 11.2,
+                 'Median Household Income': 55461},
+                {'2010 Population': 7208,
+                 '2014 Population': 7201,
+                 'Population Percent Change': -0.1,
+                 'Population per Square Mile': 3.0},
+                'WY')]
+        actual = hw3.ethnicity_less_than(input, "Two or More Races", 50)
+        self.assertEqual(expected, actual)
+
+    def test_ethnicity_less_than_2(self):
+            input = [data.CountyDemographics(
+                {'Percent 65 and Older': 18.1,
+                 'Percent Under 18 Years': 21.6,
+                 'Percent Under 5 Years': 6.5},
+                'Weston County',
+                {"Bachelor's Degree or Higher": 17.2,
+                 'High School or Higher': 90.2},
+                {'American Indian and Alaska Native Alone': 1.7,
+                 'Asian Alone': 0.4,
+                 'Black Alone': 0.7,
+                 'Hispanic or Latino': 4.2,
+                 'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+                 'Two or More Races': 2.2,
+                 'White Alone': 95.0,
+                 'White Alone, not Hispanic or Latino': 91.5},
+                {'Per Capita Income': 28764,
+                 'Persons Below Poverty Level': 11.2,
+                 'Median Household Income': 55461},
+                {'2010 Population': 7208,
+                 '2014 Population': 7201,
+                 'Population Percent Change': -0.1,
+                 'Population per Square Mile': 3.0},
+                'WY')]
+            expected = []
+            actual = hw3.ethnicity_less_than(input, "White Alone", 50)
+            self.assertEqual(expected, actual)
     # test below_poverty_level_greater_than
+    def test_below_poverty_level_greater_than(self):
+        input = [data.CountyDemographics(
+            {'Percent 65 and Older': 18.1,
+             'Percent Under 18 Years': 21.6,
+             'Percent Under 5 Years': 6.5},
+            'Weston County',
+            {"Bachelor's Degree or Higher": 17.2,
+             'High School or Higher': 90.2},
+            {'American Indian and Alaska Native Alone': 1.7,
+             'Asian Alone': 0.4,
+             'Black Alone': 0.7,
+             'Hispanic or Latino': 4.2,
+             'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+             'Two or More Races': 2.2,
+             'White Alone': 95.0,
+             'White Alone, not Hispanic or Latino': 91.5},
+            {'Per Capita Income': 28764,
+             'Persons Below Poverty Level': 11.2,
+             'Median Household Income': 55461},
+            {'2010 Population': 7208,
+             '2014 Population': 7201,
+             'Population Percent Change': -0.1,
+             'Population per Square Mile': 3.0},
+            'WY')]
+        expected = []
+        actual = hw3.below_poverty_level_greater_than(input, 50)
+        self.assertEqual(expected, actual)
+
+    def test_below_poverty_level_greater_than_2(self):
+        input = [data.CountyDemographics(
+            {'Percent 65 and Older': 18.1,
+             'Percent Under 18 Years': 21.6,
+             'Percent Under 5 Years': 6.5},
+            'Weston County',
+            {"Bachelor's Degree or Higher": 17.2,
+             'High School or Higher': 90.2},
+            {'American Indian and Alaska Native Alone': 1.7,
+             'Asian Alone': 0.4,
+             'Black Alone': 0.7,
+             'Hispanic or Latino': 4.2,
+             'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+             'Two or More Races': 2.2,
+             'White Alone': 95.0,
+             'White Alone, not Hispanic or Latino': 91.5},
+            {'Per Capita Income': 28764,
+             'Persons Below Poverty Level': 11.2,
+             'Median Household Income': 55461},
+            {'2010 Population': 7208,
+             '2014 Population': 7201,
+             'Population Percent Change': -0.1,
+             'Population per Square Mile': 3.0},
+            'WY')]
+        expected = [data.CountyDemographics(
+            {'Percent 65 and Older': 18.1,
+             'Percent Under 18 Years': 21.6,
+             'Percent Under 5 Years': 6.5},
+            'Weston County',
+            {"Bachelor's Degree or Higher": 17.2,
+             'High School or Higher': 90.2},
+            {'American Indian and Alaska Native Alone': 1.7,
+             'Asian Alone': 0.4,
+             'Black Alone': 0.7,
+             'Hispanic or Latino': 4.2,
+             'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+             'Two or More Races': 2.2,
+             'White Alone': 95.0,
+             'White Alone, not Hispanic or Latino': 91.5},
+            {'Per Capita Income': 28764,
+             'Persons Below Poverty Level': 11.2,
+             'Median Household Income': 55461},
+            {'2010 Population': 7208,
+             '2014 Population': 7201,
+             'Population Percent Change': -0.1,
+             'Population per Square Mile': 3.0},
+            'WY')]
+        actual = hw3.below_poverty_level_greater_than(input, 10)
+        self.assertEqual(expected, actual)
+
     # test below_poverty_level_less_than
+    def test_below_poverty_level_less_than(self):
+        input = [data.CountyDemographics(
+            {'Percent 65 and Older': 18.1,
+             'Percent Under 18 Years': 21.6,
+             'Percent Under 5 Years': 6.5},
+            'Weston County',
+            {"Bachelor's Degree or Higher": 17.2,
+             'High School or Higher': 90.2},
+            {'American Indian and Alaska Native Alone': 1.7,
+             'Asian Alone': 0.4,
+             'Black Alone': 0.7,
+             'Hispanic or Latino': 4.2,
+             'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+             'Two or More Races': 2.2,
+             'White Alone': 95.0,
+             'White Alone, not Hispanic or Latino': 91.5},
+            {'Per Capita Income': 28764,
+             'Persons Below Poverty Level': 11.2,
+             'Median Household Income': 55461},
+            {'2010 Population': 7208,
+             '2014 Population': 7201,
+             'Population Percent Change': -0.1,
+             'Population per Square Mile': 3.0},
+            'WY')]
+        expected = []
+        actual = hw3.below_poverty_level_less_than(input, 10)
+        self.assertEqual(expected, actual)
+
+    def test_below_poverty_level_less_than_2(self):
+        input = [data.CountyDemographics(
+            {'Percent 65 and Older': 18.1,
+             'Percent Under 18 Years': 21.6,
+             'Percent Under 5 Years': 6.5},
+            'Weston County',
+            {"Bachelor's Degree or Higher": 17.2,
+             'High School or Higher': 90.2},
+            {'American Indian and Alaska Native Alone': 1.7,
+             'Asian Alone': 0.4,
+             'Black Alone': 0.7,
+             'Hispanic or Latino': 4.2,
+             'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+             'Two or More Races': 2.2,
+             'White Alone': 95.0,
+             'White Alone, not Hispanic or Latino': 91.5},
+            {'Per Capita Income': 28764,
+             'Persons Below Poverty Level': 11.2,
+             'Median Household Income': 55461},
+            {'2010 Population': 7208,
+             '2014 Population': 7201,
+             'Population Percent Change': -0.1,
+             'Population per Square Mile': 3.0},
+            'WY')]
+        expected = [data.CountyDemographics(
+            {'Percent 65 and Older': 18.1,
+             'Percent Under 18 Years': 21.6,
+             'Percent Under 5 Years': 6.5},
+            'Weston County',
+            {"Bachelor's Degree or Higher": 17.2,
+             'High School or Higher': 90.2},
+            {'American Indian and Alaska Native Alone': 1.7,
+             'Asian Alone': 0.4,
+             'Black Alone': 0.7,
+             'Hispanic or Latino': 4.2,
+             'Native Hawaiian and Other Pacific Islander Alone': 0.0,
+             'Two or More Races': 2.2,
+             'White Alone': 95.0,
+             'White Alone, not Hispanic or Latino': 91.5},
+            {'Per Capita Income': 28764,
+             'Persons Below Poverty Level': 11.2,
+             'Median Household Income': 55461},
+            {'2010 Population': 7208,
+             '2014 Population': 7201,
+             'Population Percent Change': -0.1,
+             'Population per Square Mile': 3.0},
+            'WY')]
+        actual = hw3.below_poverty_level_less_than(input, 50)
+        self.assertEqual(expected, actual)
 
 
 
